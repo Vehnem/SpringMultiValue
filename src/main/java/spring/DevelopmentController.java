@@ -1,17 +1,34 @@
 package spring;
 
+import io.swagger.annotations.ApiParam;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
 
 @RestController
 @RequestMapping(value = "/development")
-public class Controller {
-    @RequestMapping(value = "/values", method = RequestMethod.POST, produces = { "application/v1+json" })
+public class DevelopmentController {
+
+
+    @Value("${some.key:one,two,three}")
+    private String stringWithDefaultValue;
+
+    @RequestMapping(value = "/values", method = RequestMethod.GET)
     public @ResponseBody
-    String filterRDF(
-            @RequestParam(value = "entity[]", defaultValue = "Barack_Obama") String[] entity,
-            @RequestParam(value = "property[]", defaultValue = "surname;prefix") String property
+    String testMuliValue(
+
+            @ApiParam( value = "which entities to use ... ? \n example: \"Barack_Obama\"" ) @RequestParam(value = "entity" )  String[] entity,
+            @ApiParam( value = "which properties to use ... \n example: \"surname;prefix=foaf\"") @RequestParam(value = "property" ) String[] property
     ) {
 
-        return "Foobar";
+        StringBuilder sb = new StringBuilder();
+        sb.append("ENTITIES : ");
+        sb.append(Arrays.asList(entity));
+        sb.append("\n");
+        sb.append("PROPERTIES : ");
+        sb.append(Arrays.asList(property).toString());
+
+        return sb.toString();
     }
 }
